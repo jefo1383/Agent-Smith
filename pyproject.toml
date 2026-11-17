@@ -1,0 +1,33 @@
+[project]
+name = "Agent Smith"
+version = "0.1.0"
+description = "Agent Smith - 42 project by Jeremy Foeller"
+readme = "README.md"
+authors = [
+    { name = "jfoeller", email = "jeremy.foeller@learner.42.tech" }
+]
+
+requires-python = ">=3.10, <3.11"
+
+[dependency-groups]
+dev = [
+	"flake8",
+	"mypy",
+	"pydocstyle"
+]
+prod = [
+    "pydantic",
+    "mcp",
+    "httpx",
+    "python-dotenv",
+    "fire",
+    "tqdm"
+]
+
+[tool.pydocstyle]
+convention = "google"
+match_dir = "src"
+
+[[tool.mypy.overrides]]
+module = ["fire.*", "tqdm.*"]
+ignore_missing_imports = true

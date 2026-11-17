@@ -1,0 +1,5 @@
+*pycache*
+.mypy*
+.venv
+GEMINI.md
+Agent Smith.pdf
