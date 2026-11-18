@@ -1,9 +1,10 @@
-FLAKE8_EXCLUDE = --exclude=.venv,data,__pycache__
-MYPY_EXCLUDE = --exclude '(\.venv|data|__pycache__)'
+FLAKE8_EXCLUDE = --exclude=.venv,moulinette,__pycache__
+MYPY_EXCLUDE = --exclude '(\.venv|moulinette|__pycache__)'
 export UV_CACHE_DIR = /goinfre/$(USER)/.cache/uv
 export HF_HOME = /goinfre/$(USER)/.cache/huggingface
+export UV_PYTHON_INSTALL_DIR = /goinfre/$(USER)/.cache/uv/python
 
-.PHONY: install-42 install run debug clean fclean re lint lint-strict
+.PHONY: install-42 install run debug clean fclean re re-42 lint lint-strict doc sandbox
 
 install-42:
 	@which uv > /dev/null 2>&1 || pip install --user uv
@@ -11,7 +12,7 @@ install-42:
 	mkdir -p $(UV_CACHE_DIR)
 	mkdir -p $(HF_HOME)
 	uv venv /goinfre/$(USER)/AgentSmith_env/.venv
-	ln -sf /goinfre/$(USER)/AgentSmith_env/.venv .venv
+	ln -sfn /goinfre/$(USER)/AgentSmith_env/.venv .venv
 	uv sync
 
 install:
@@ -21,15 +22,21 @@ install:
 run:
 	uv run python -m
 
+sandbox:
+	uv run sandbox
+
 debug:
 	uv run python -m
 
 clean:
-	rm -rf __pycache__ src/__pycache__ .mypy_cache .python-version
+	find . -path ./.venv -prune -o -path ./moulinette -prune -o -name "__pycache__" -exec rm -rf {} +
+	find . -path ./.venv -prune -o -path ./moulinette -prune -o -name ".mypy_cache" -exec rm -rf {} +
+	rm -rf *.egg-info
 
 fclean: clean
 	rm -rf /goinfre/$(USER)/AgentSmith_env
-	rm -rf /goinfre/$(USER)/.cache
+	rm -rf $(UV_CACHE_DIR)
+	rm -rf $(HF_HOME)
 	rm -rf .venv
 
 re: fclean install
@@ -37,12 +44,12 @@ re: fclean install
 re-42: fclean install-42
 
 lint:
-	uv run flake8 src $(FLAKE8_EXCLUDE)
-	uv run mypy --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs src $(MYPY_EXCLUDE)
+	uv run flake8 $(FLAKE8_EXCLUDE)
+	uv run mypy --warn-return-any --warn-unused-ignores --ignore-missing-imports --disallow-untyped-defs --check-untyped-defs . $(MYPY_EXCLUDE)
 
 lint-strict:
-	uv run flake8 src $(FLAKE8_EXCLUDE)
-	uv run mypy --strict src $(MYPY_EXCLUDE)
+	uv run flake8 $(FLAKE8_EXCLUDE)
+	uv run mypy --strict . $(MYPY_EXCLUDE)
 
 doc:
 	uv run pydocstyle src

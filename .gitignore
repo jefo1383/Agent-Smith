@@ -3,3 +3,6 @@
 .venv
 GEMINI.md
 Agent Smith.pdf
+moulinette
+.env
+*.egg-info
