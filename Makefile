@@ -11,7 +11,9 @@ install-42:
 	mkdir -p /goinfre/$(USER)/AgentSmith_env
 	mkdir -p $(UV_CACHE_DIR)
 	mkdir -p $(HF_HOME)
-	uv venv /goinfre/$(USER)/AgentSmith_env/.venv
+	mkdir -p $(UV_PYTHON_INSTALL_DIR)
+	uv python install 3.10
+	uv venv --python 3.10 /goinfre/$(USER)/AgentSmith_env/.venv
 	ln -sfn /goinfre/$(USER)/AgentSmith_env/.venv .venv
 	uv sync
 
